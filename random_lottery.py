@@ -1,5 +1,16 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
+# Description: 大概是用来做36选7叭
 import random
+import sys
+
+pyver = sys.version_info.major
+
+if pyver == 2:
+    pass
+elif pyver == 3:
+    from functools import reduce
+else:
+    sys.exit(1)
 
 lottery_list = []
 while len(lottery_list) < 7:
@@ -18,4 +29,3 @@ print(lottery_list)
 
 # N=random.randint(a,b)
 # a <= N <= b
-
