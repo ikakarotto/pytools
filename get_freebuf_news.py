@@ -44,12 +44,12 @@ def getTitle(url):
     # print(title_list)
     # print(html)
     for i in title_list[0]:
-         if i: title = i
-         if len(title) > 50: title = title[0:85] + ' ...'
+         if i: title = i.strip().replace(' - FreeBuf网络安全行业门户','')
     return title
 
 # 获取最新的早报链接
 def getFreebufLatestLink():
+    '''
     time_date = time.strftime('%Y-%m-%d', time.localtime())
     url = 'https://www.freebuf.com/news'
     link = ''
@@ -68,6 +68,24 @@ def getFreebufLatestLink():
                 # print(title)
                 # print(link)
     return link
+    '''
+
+    time_date = time.strftime('%Y-%m-%d', time.localtime())
+    url = 'https://www.freebuf.com/news'
+    link = ''
+    response = requests.get(url, headers = headers)
+    response.encoding = 'utf-8'
+    html = response.text
+    bsObj = BeautifulSoup(html, 'lxml')
+    list_tag_a = bsObj.findAll(name = 'a')
+    for tag_a in list_tag_a:
+        if '早报' in tag_a.text:
+            title = tag_a.text
+            url = tag_a.attrs['href']
+            if url.startswith('/'): url = 'https://www.freebuf.com' + url
+            break
+
+    return url
 
 # 发送到钉钉
 def sendNewsToDtalk(links):
@@ -120,17 +138,20 @@ def getImgList():
               'https://pic2.zhimg.com/80/v2-fa1bf84a90bcc3caee3964dc984a360e_hd.jpg'
     ]
 
-    # imgurls += picurls
+    imgurls += picurls
     return imgurls
 
 
 if __name__ == '__main__':
-    dtalk_robot = 'https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxxx'
+    # dtalk_robot = 'https://oapi.dingtalk.com/robot/send?access_token=3cf6cafccae6017f24d038d3b3fe732b7d9aa2c9b6b89c8837f8ee3ee17eed98'
+    dtalk_robot = 'https://oapi.dingtalk.com/robot/send?access_token=3b15eedc17a5e896dfdcc2a0ab6b7e1739e1f282849e4eaa24f4a11dd43ae296'
+    # dtalk_robot = 'https://oapi.dingtalk.com/robot/send?access_token=19646e4e77da1ab6fc51f41026bcecd7ef6d01ca12333b305676bdfdedb52818'
     headers ={ 'User-Agent': getRandomUserAgent() }
 
     picurls = getImgList()
 
     links = []
+
     for inputurl in sys.argv[1:]:
         if inputurl.startswith('http://') or inputurl.startswith('https://'):
             title = getTitle(inputurl)
