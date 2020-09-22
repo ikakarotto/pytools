@@ -155,6 +155,7 @@ if __name__ == '__main__':
     for inputurl in sys.argv[1:]:
         if inputurl.startswith('http://') or inputurl.startswith('https://'):
             title = getTitle(inputurl)
+            inputurl = inputurl.replace('www.freebuf','m.freebuf')
             if title:
                 links.append({"title": title, "messageURL": inputurl, "picURL": choice(picurls)})
 
@@ -162,6 +163,7 @@ if __name__ == '__main__':
             url_freebuf_latest = getFreebufLatestLink()
             if url_freebuf_latest:
                 title = getTitle(url_freebuf_latest)
+                url_freebuf_latest = url_freebuf_latest.replace('www.freebuf','m.freebuf')
                 if title:
                     links.append({"title": title, "messageURL": url_freebuf_latest, "picURL": choice(picurls)})
 
