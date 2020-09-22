@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # coding: utf-8
-# 计算 广发多元新兴股票(003745) 净值
+# 计算基金净值
+# 爬虫写得好，牢饭包管饱
 
 import requests
 import re
 from bs4 import BeautifulSoup
 from random import choice
+import sys
 
 # 随机获取UserAgent
 def getRandomUserAgent():
@@ -27,6 +29,15 @@ def getRandomUserAgent():
                  'Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36'
         ]
     return choice(agents)
+
+def getTitle(url):
+    response = requests.get(url, headers = headers)
+    response.encoding = 'utf-8'
+    html = response.text
+
+    h2 = re.findall(r'(<h2>.*?净值走势</h2>)', html)[0]
+    h2Obj = BeautifulSoup(h2, 'lxml')
+    print(h2Obj.text)
 
 def getNextPage(url):
     response = requests.get(url, headers = headers)
@@ -61,11 +72,17 @@ def counterNav(value, url):
         print(date,value)
     return value
 
+
 if __name__ == '__main__':
-    url = 'http://quotes.money.163.com/fund/jzzs_003745.html?start=2020-01-01&end=2020-09-21&order=asc'
+    if len(sys.argv) > 1:
+        fundcode = sys.argv[1]
+    else:
+        fundcode = 164701 # 汇添富黄金及贵金属(164701)
+    url = 'http://quotes.money.163.com/fund/jzzs_' + str(fundcode) + '.html?start=2020-01-01&end=2020-09-21&order=asc'
+
     headers ={ 'User-Agent': getRandomUserAgent() }
+    getTitle(url)
     value = 1
-    
     value = counterNav(value, url)
 
     next_page = getNextPage(url)
@@ -73,4 +90,3 @@ if __name__ == '__main__':
         url = next_page
         value = counterNav(value, url)
         next_page = getNextPage(url)
-
