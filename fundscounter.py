@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 # coding: utf-8
 # 计算基金净值
-# 爬虫写得好，牢饭包管饱
+# --------- 爬虫写得好，牢饭包管饱 ---------
+# python3 fundscounter.py
+# python3 fundscounter.py 164701
+# python3 fundscounter.py 164701 2020-07-01
+# fundcode = 164701 # 汇添富黄金及贵金属(164701)
 
 import requests
 import re
 from bs4 import BeautifulSoup
 from random import choice
 import sys
+import datetime
 
 # 随机获取UserAgent
 def getRandomUserAgent():
@@ -76,17 +81,35 @@ def counterNav(value, url):
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         fundcode = sys.argv[1]
+        if len(sys.argv) > 2:
+            datestart = sys.argv[2]
+        else:
+            datestart = '2020-01-01'
     else:
         fundcode = 164701 # 汇添富黄金及贵金属(164701)
-    url = 'http://quotes.money.163.com/fund/jzzs_' + str(fundcode) + '.html?start=2020-01-01&end=2020-09-21&order=asc'
+        datestart = '2020-01-01'
+
+    dateend = datetime.date.today() + datetime.timedelta(-1)
+    dateend = dateend.strftime('%Y-%m-%d')
+
+    dateyes = datetime.date.today() + datetime.timedelta(-1)
+    dateyes = dateyes.strftime('%Y-%m-%d')
+    datecount = 31
+    datebef31 = datetime.date.today() + datetime.timedelta(-datecount)
+    datebef31 = datebef31.strftime('%Y-%m-%d')
+
+    # url = 'http://quotes.money.163.com/fund/jzzs_164701.html?start=2020-01-01&end=2020-09-21&order=asc'
+    url = 'http://quotes.money.163.com/fund/jzzs_' + str(fundcode) + '.html?start=' + datestart + '&end=' + dateend + '&order=asc'
 
     headers ={ 'User-Agent': getRandomUserAgent() }
     getTitle(url)
-    value = 1
-    value = counterNav(value, url)
+    valueint = 1
+    value = counterNav(valueint, url)
 
     next_page = getNextPage(url)
     while next_page:
         url = next_page
         value = counterNav(value, url)
         next_page = getNextPage(url)
+
+    print('%.2f' % ((value-valueint)/valueint*100))
