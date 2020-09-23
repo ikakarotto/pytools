@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
-# 计算基金净值
 # --------- 爬虫写得好，牢饭包管饱 ---------
+# 计算基金净值
 # python3 fundscounter.py
 # python3 fundscounter.py 164701
 # python3 fundscounter.py 164701 2020-07-01
