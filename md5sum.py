@@ -5,18 +5,29 @@
 '''
 import sys
 import os
+import glob
 import getopt
 import hashlib
+import time
 
-def get_md5(argv):
-    for filename in argv:
-        if os.path.isfile(filename):
-            fb = open(filename,'rb')
-            md5 = hashlib.md5(fb.read()).hexdigest()
-            fb.close()
-            print(md5 + ' ' + filename)
-        else:
-            print('< ' + filename + ' > No such file.')
+def file_to_md5(filename):
+    if os.path.isfile(filename):
+        fb = open(filename,'rb')
+        md5 = hashlib.md5(fb.read()).hexdigest()
+        fb.close()
+        print(md5 + ' ' + filename)
+
+def get_md5(filelists):
+    for fpath in filelists:
+        filecount = len(list(glob.iglob(fpath)))
+        if filecount == 0:
+            print('%s [Error] No such file: %s' % (time.strftime('%F %T',time.localtime()), fpath))
+        elif filecount == 1:
+            filename = list(glob.iglob(fpath))[0]
+            file_to_md5(filename)
+        elif filecount > 1:
+            for filename in list(glob.iglob(fpath)):
+                file_to_md5(filename)
 
 def check_md5(md5file):
     
