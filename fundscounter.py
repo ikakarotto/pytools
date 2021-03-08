@@ -118,7 +118,7 @@ if __name__ == '__main__':
     # 获取下一页的基金净值
     next_page = getNextPage(url)
     while next_page:
-        time.sleep(random.choice(range(1,11)))
+        time.sleep(choice(range(1,11)))
         url = next_page
         value = counterNav(value, url)
         next_page = getNextPage(url)
