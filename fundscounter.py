@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 from random import choice
 import sys
 import datetime
+import time
 
 # 随机获取UserAgent
 def getRandomUserAgent():
@@ -35,6 +36,7 @@ def getRandomUserAgent():
         ]
     return choice(agents)
 
+# 获取基金净值页面标题
 def getTitle(url):
     response = requests.get(url, headers = headers)
     response.encoding = 'utf-8'
@@ -44,6 +46,7 @@ def getTitle(url):
     h2Obj = BeautifulSoup(h2, 'lxml')
     print(h2Obj.text)
 
+# 获取下一页链接
 def getNextPage(url):
     response = requests.get(url, headers = headers)
     response.encoding = 'utf-8'
@@ -58,6 +61,7 @@ def getNextPage(url):
             next_page = next_page.replace('&order=desc','&order=asc')
             return next_page
 
+# 统计净值
 def counterNav(value, url):
     response = requests.get(url, headers = headers)
     response.encoding = 'utf-8'
@@ -89,25 +93,32 @@ if __name__ == '__main__':
         fundcode = 164701 # 汇添富黄金及贵金属(164701)
         datestart = '2020-01-01'
 
+    # 前一天的日期
     dateend = datetime.date.today() + datetime.timedelta(-1)
     dateend = dateend.strftime('%Y-%m-%d')
 
-    dateyes = datetime.date.today() + datetime.timedelta(-1)
-    dateyes = dateyes.strftime('%Y-%m-%d')
-    datecount = 31
-    datebef31 = datetime.date.today() + datetime.timedelta(-datecount)
-    datebef31 = datebef31.strftime('%Y-%m-%d')
+    # 
+    # dateyes = datetime.date.today() + datetime.timedelta(-1)
+    # dateyes = dateyes.strftime('%Y-%m-%d')
+    # datecount = 31
+    # datebef31 = datetime.date.today() + datetime.timedelta(-datecount)
+    # datebef31 = datebef31.strftime('%Y-%m-%d')
 
+    # 拼接基金净值地址
     # url = 'http://quotes.money.163.com/fund/jzzs_164701.html?start=2020-01-01&end=2020-09-21&order=asc'
     url = 'http://quotes.money.163.com/fund/jzzs_' + str(fundcode) + '.html?start=' + datestart + '&end=' + dateend + '&order=asc'
 
     headers ={ 'User-Agent': getRandomUserAgent() }
     getTitle(url)
+    # 定义净值基数为1
     valueint = 1
+    # 计算第一页的基金净值
     value = counterNav(valueint, url)
 
+    # 获取下一页的基金净值
     next_page = getNextPage(url)
     while next_page:
+        time.sleep(random.choice(range(1,11)))
         url = next_page
         value = counterNav(value, url)
         next_page = getNextPage(url)
