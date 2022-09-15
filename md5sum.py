@@ -2,8 +2,8 @@
 # coding: utf-8
 '''
 用途: 用于检查文件md5是否正确,类似linux下md5sum -c md5.txt的功能
-修改时间: 2020-11-02
-出处: gd-zhoudehai
+修改时间: 2022-09-15
+出处: dehai
 '''
 import sys
 import os
