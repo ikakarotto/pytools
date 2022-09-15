@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # coding: utf-8
 '''
-用于检查文件md5是否正确,类似linux下md5sum -c md5.txt的功能
+用途: 用于检查文件md5是否正确,类似linux下md5sum -c md5.txt的功能
+修改时间: 2020-11-02
+出处: gd-zhoudehai
 '''
 import sys
 import os
@@ -9,6 +11,9 @@ import glob
 import getopt
 import hashlib
 import time
+
+def string_to_md5(s):
+    return hashlib.md5(bytes(str(s), encoding='utf8')).hexdigest()
 
 def file_to_md5(filename):
     if os.path.isfile(filename):
@@ -21,16 +26,12 @@ def get_md5(filelists):
     for fpath in filelists:
         filecount = len(list(glob.iglob(fpath)))
         if filecount == 0:
-            print('%s [Error] No such file: %s' % (time.strftime('%F %T',time.localtime()), fpath))
-        elif filecount == 1:
-            filename = list(glob.iglob(fpath))[0]
-            file_to_md5(filename)
-        elif filecount > 1:
+            print('%s [Error] No such file: %s' % (time.strftime('%Y-%m-%d %H:%M:%S',time.localtime()), fpath))
+        elif filecount > 0:
             for filename in list(glob.iglob(fpath)):
                 file_to_md5(filename)
 
 def check_md5(md5file):
-    
     if os.path.isfile(md5file):
         pass
     else:
@@ -82,3 +83,4 @@ def main(argv):
     
 if __name__ == "__main__":
     main(sys.argv[1:])
+
