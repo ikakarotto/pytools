@@ -43,29 +43,6 @@ def get_gold_list():
     except Exception as e:
         raise e
 
-def get_gold_price_history(date,gold_array):
-    gold_name,gold_code,gold_type,gold_href = gold_array
-    #### filter some keywords
-    for gold_key in ['黄金','金条','足金','基础金价','零售价','回收价']:
-        if gold_key in gold_type:
-            ts = int(time.time()*1000)
-            url = f'https://api.jijinhao.com/quoteCenter/history.htm?code={gold_code}&style=3&pageSize=10&needField=128,129,70&startDate={date}&endDate={date}&_={ts}'
-            headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
-                "Referer": gold_href
-                }
-            response = requests.get(url, headers=headers)
-            resp = response.text
-            try:
-                start_index = resp.find('{')
-                end_index = resp.rfind('}') + 1
-                quote_json = resp[start_index:end_index]
-                quote_dict = json.loads(quote_json)
-                gold_price = quote_dict['data'][0]['q1'] if len(quote_dict['data']) else "Unknown"
-                print(date, gold_name, gold_type, gold_price)
-            except Exception as e:
-                raise e
-
 def get_gold_price_realtime(gold_array):
     gold_name,gold_code,gold_type,gold_href = gold_array
     date = time.strftime('%Y-%m-%d', time.localtime())
@@ -85,8 +62,31 @@ def get_gold_price_realtime(gold_array):
                 end_index = resp.rfind('}') + 1
                 quote_json = resp[start_index:end_index]
                 quote_dict = json.loads(quote_json)
-                gold_price = quote_dict[gold_code]['q1'] if len(quote_dict[gold_code]) else "Unknown"
-                print(date, gold_name, gold_type, gold_price)
+                gold_price = quote_dict[gold_code]['q1'] if len(quote_dict[gold_code]) else "0"
+                print(date, gold_name, gold_type, int(gold_price))
+            except Exception as e:
+                raise e
+
+def get_gold_price_history(date,gold_array):
+    gold_name,gold_code,gold_type,gold_href = gold_array
+    #### filter some keywords
+    for gold_key in ['黄金','金条','足金','基础金价','零售价','回收价']:
+        if gold_key in gold_type:
+            ts = int(time.time()*1000)
+            url = f'https://api.jijinhao.com/quoteCenter/history.htm?code={gold_code}&style=3&pageSize=10&needField=128,129,70&startDate={date}&endDate={date}&_={ts}'
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
+                "Referer": gold_href
+                }
+            response = requests.get(url, headers=headers)
+            resp = response.text
+            try:
+                start_index = resp.find('{')
+                end_index = resp.rfind('}') + 1
+                quote_json = resp[start_index:end_index]
+                quote_dict = json.loads(quote_json)
+                gold_price = quote_dict['data'][0]['q1'] if len(quote_dict['data']) else "0"
+                print(date, gold_name, gold_type, int(gold_price))
             except Exception as e:
                 raise e
 
@@ -96,15 +96,15 @@ if __name__ == '__main__':
     # pprint(gold_list)
 
     #### get realtime price
-    for gold_array in gold_list[:15]:
+    for gold_array in gold_list[:40]:
         time.sleep(choice(range(1,21))/10)
         get_gold_price_realtime(gold_array)
 
     #### get history price
+    # date = '2023-02-01'
     # date = time.strftime('%Y-%m-%d', time.localtime())
-    # date = (datetime.date.today()-datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-    date = '2023-02-01'
-    for gold_array in gold_list[:15]:
+    date = (datetime.date.today()-datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+    for gold_array in gold_list[:40]:
         time.sleep(choice(range(1,21))/10)
         get_gold_price_history(date,gold_array)
 
