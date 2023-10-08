@@ -8,6 +8,7 @@ import json
 from bs4 import BeautifulSoup
 from random import choice
 from pprint import pprint
+from sys import argv
 
 #### get gold code list
 def get_gold_list():
@@ -95,19 +96,28 @@ if __name__ == '__main__':
     gold_list = get_gold_list()
     # pprint(gold_list)
 
-    #### get realtime price
-    for gold_array in gold_list[:40]:
-        time.sleep(choice(range(1,21))/10)
-        get_gold_price_realtime(gold_array)
+    if len(argv) == 1:
+        #### get realtime price
+        for gold_array in gold_list[:40]:
+            time.sleep(choice(range(1,21))/10)
+            get_gold_price_realtime(gold_array)
 
-    #### get history price
-    # date = '2023-02-01'
-    # date = time.strftime('%Y-%m-%d', time.localtime())
-    date = (datetime.date.today()-datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-    for gold_array in gold_list[:40]:
-        time.sleep(choice(range(1,21))/10)
-        get_gold_price_history(date,gold_array)
+        #### get history price from yesterday
+        # date = '2023-02-01'
+        # date = time.strftime('%Y-%m-%d', time.localtime())
+        date = (datetime.date.today()-datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+        for gold_array in gold_list[:40]:
+            time.sleep(choice(range(1,21))/10)
+            get_gold_price_history(date,gold_array)
 
+    elif len(argv) > 1:
+        #### get history price from special date
+        # date = '2023-02-01'
+        # date = time.strftime('%Y-%m-%d', time.localtime())
+        date = argv[1]
+        for gold_array in gold_list[:40]:
+            time.sleep(choice(range(1,21))/10)
+            get_gold_price_history(date,gold_array)
 
 '''
 https://quote.cngold.org/gjs/swhj.html
