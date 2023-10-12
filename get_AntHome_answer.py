@@ -20,9 +20,11 @@ def get_answer1():
         #print(html)
         soup = BeautifulSoup(html, 'lxml')
         tables = soup.find_all('table', {'border': '1', 'cellpadding': '1', 'cellspacing': '1', 'style': 'width: 98%'})
-        trs = tables[0].find_all('tr')
-        tr = trs[1]
-        print(tr.text.split())
+        # trs = tables[0].find_all('tr')
+        # tr = trs[1]
+        # print(tr.text.split())
+        for tr in tables[0].find_all('tr')[1:6]:
+            print(tr.text.split())
 
     except Exception as e:
         raise e
